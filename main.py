@@ -1,37 +1,38 @@
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
-import random
-import cv2
-import os
-import glob
-
-import torch
-import torchvision
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-
-from tqdm import tqdm
-from torch.utils.data import DataLoader, Dataset
-from torchvision.transforms import transforms
-from torchvision.utils import save_image
-from torch.autograd import Variable
-
+import albumentations as A
 from sklearn.model_selection import train_test_split
-from skimage import metrics
+import img_encoder
+import torch
+import numpy as np
 
-os.makedirs('motion_blurred', exist_ok=True)
-src_dir = 'dir'
-images = os.listdir(src_dir)
-dst_dir = 'motion_blurred'
-size = 11
-kernel_motion_blur = np.zeros((size, size))
-kernel_motion_blur[int((size-1)/2), :] = np.ones(size)
-kernel_motion_blur = kernel_motion_blur/size
-for i, img in tqdm(enumerate(images), total=len(images)):
-    img = cv2.imread(f"{src_dir}/{images[i]}")
-    blur = cv2.filter2D(img, -1, kernel_motion_blur)
-    cv2.imwrite(f"{dst_dir}/{images[i]}", blur)
-print('Done')
+random_seed = 42
+
+torch.manual_seed(random_seed)
+torch.cuda.manual_seed(random_seed)
+torch.cuda.manual_seed_all(random_seed)
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
+np.random.seed(random_seed)
+random.seed(random_seed)
+
+num_workers = 2
+batch_size = 48
+
+train_transforms = A.Compose([
+    A.Rotate(),
+    A.HorizontalFlip(),
+    A.ColorJitter(brightness=0.2, contrast=0.2, saturation=-.2, hue=0.2),
+    A.Normalize()
+])
+
+val_transforms = A.Compose([
+    A.Normalize()
+])
+
+data_lists, data_labels = img_encoder.img_gather("blur_dataset")
+
+best_models = []
+k_fold_num = 5
+
+if k_fold_num == -1:
+    train_lists, val_lists, train_labels, val_labels = train_test_split(
+        data_lists, data_labels, train_size=0.8, shuffle=True, random_state=random_seed, stratify=data_labels)
