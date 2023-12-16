@@ -3,6 +3,7 @@ from sklearn.model_selection import train_test_split
 import img_encoder
 import torch
 import numpy as np
+import random
 
 random_seed = 42
 
