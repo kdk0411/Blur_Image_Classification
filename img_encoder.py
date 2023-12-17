@@ -1,9 +1,9 @@
 import os
 import numpy as np
 class_encoder = {
-    "sharp" : 0,
-    "defocused_blurred" : 1,
-    "motion_blurred" : 2
+    "defocused_blurred" : 0,
+    "motion_blurred" : 1,
+    "sharp" : 2
 }
 
 def img_gather(img_path):

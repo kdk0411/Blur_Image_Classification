@@ -2,19 +2,13 @@ import torch.nn as nn
 import torch
 import torch.optim as optim
 
-# Hyper-parameters & Variables setting
-num_epoch = 200
-batch_size = 32
 lr = 1e-4
-num_channel = 1
-dir_name = "CGAN_results"
-
+num_channel = 3
 noise_size = 100
-
 img_size = 32*32
 Class_num = 3
 
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'CPU')
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 print(device)
 
 class Discriminator(nn.Module):
@@ -24,7 +18,7 @@ class Discriminator(nn.Module):
     self.linear1 = nn.Linear(img_size + Class_num, 1024)
     self.linear2 = nn.Linear(1024, 512)
     self.linear3 = nn.Linear(512, 256)
-    self.linear4 = nn.Linear(256, 3)
+    self.linear4 = nn.Linear(256, 1)
     self.Leaky_relu = nn.LeakyReLU(0.2)
     self.sigmoid = nn.Sigmoid()
 
@@ -41,10 +35,10 @@ class Generator(nn.Module):
   def __init__(self):
     super(Generator, self).__init__()
 
-    self.linear1 = nn.Linear(img_size + Class_num, 1024)
+    self.linear1 = nn.Linear(noise_size + Class_num, 1024)
     self.linear2 = nn.Linear(1024, 512)
     self.linear3 = nn.Linear(512, 256)
-    self.linear4 = nn.Linear(256, img_size)
+    self.linear4 = nn.Linear(256, img_size * num_channel)
     self.relu = nn.ReLU()
     self.tanh = nn.Tanh()
 

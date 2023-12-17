@@ -2,6 +2,7 @@ import cv2
 import torch
 from torch.utils.data import Dataset
 
+
 class TrainDataset(Dataset):
     def __init__(self, file_lists, label_lists, transforms=None):
         self.file_lists = file_lists.copy()
