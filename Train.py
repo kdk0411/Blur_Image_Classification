@@ -13,10 +13,10 @@ def Train(data_loader):
     feat_extractor = [m for n,m in model.named_paramerters() if "fc" not in n]
     classifier = [p for p in model.fc.parameters()]
     params = [
-        {"params" : feat_extractor, "lr" : (1e-4)*0.5},
-        {"params" : classifier, "lr" : 1e-4}
+        {"params" : feat_extractor, "lr" : (3e-4)*0.5},
+        {"params" : classifier, "lr" : 3e-4}
     ]
-    optimizer = optim.Adam(params, lr=1e-4)
+    optimizer = optim.Adam(params, lr=3e-4)
     scheduler = CosineAnnealingLR(optimizer, T_max=10, eta_min=0)
 
     result = {"train_loss" : [], "val_loss" : [], "val_acc" : [], "val_f1" : []}

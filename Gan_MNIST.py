@@ -10,7 +10,7 @@ from PIL import Image, ImageFont, ImageDraw
 
 num_epoch = 200
 batch_size = 100
-learning_rate = 0.0002
+learning_rate = 3e-4
 img_size = 28 * 28
 num_channel = 1
 dir_name = "CGAN_results"
